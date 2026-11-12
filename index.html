@@ -4,14 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Speech Practice</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Nunito', 'sans-serif'],
+                        display: ['Fredoka', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body { font-family: 'Inter', sans-serif; overflow: hidden; touch-action: manipulation; }
+        body { overflow-x: hidden; touch-action: manipulation; background: linear-gradient(135deg, #f0f4ff 0%, #eef2f7 100%); }
         .hide { display: none !important; }
-        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Vibrant Translucent Bubble Prize Animations - Slow & Rising Above Header */
+        /* Vibrant Translucent Bubble Prize Animations */
         @keyframes floatBubble { 
             0% { transform: translateY(110vh) scale(0.8) rotate(0deg); opacity: 0.9; } 
             85% { opacity: 0.9; }
@@ -35,44 +51,39 @@
         
         @keyframes sillyDance { 0% { transform: translateY(0) rotate(0deg) scale(1); } 25% { transform: translateY(-20px) rotate(-15deg) scale(1.1); } 50% { transform: translateY(0) rotate(0deg) scale(1); } 75% { transform: translateY(-20px) rotate(15deg) scale(1.1); } 100% { transform: translateY(0) rotate(0deg) scale(1); } }
         .dancing-char { animation: sillyDance 0.8s infinite; font-size: 8rem; cursor: pointer; user-select: none; }
-        
-        .prize-balloon { animation: floatUp 6s linear forwards; font-size: 4rem; position: absolute; cursor: pointer; user-select: none; transition: transform 0.2s, opacity 0.2s; z-index: 50; }
-        .prize-banana { animation: rainDown 4s linear forwards; font-size: 4rem; position: absolute; cursor: pointer; user-select: none; transition: transform 0.2s, opacity 0.2s; z-index: 50; }
-        @keyframes floatUp { 0% { transform: translateY(110vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(-20vh) rotate(20deg); opacity: 1; } }
-        @keyframes rainDown { 0% { transform: translateY(-20vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(180deg); opacity: 1; } }
     </style>
 </head>
-<body class="bg-blue-50 h-screen w-screen flex flex-col m-0 p-0 select-none">
+<body class="h-screen w-screen flex flex-col m-0 p-0 select-none text-slate-700">
 
     <!-- HEADER -->
-    <header class="bg-blue-500 text-white p-4 text-center relative shadow-md z-40">
-        <h1 id="header-title" class="text-2xl sm:text-3xl font-black tracking-wide">Speech Practice</h1>
-        <button id="logout-btn" onclick="logout()" class="hide absolute top-4 right-4 bg-white/25 hover:bg-white/35 rounded-lg px-3 py-1 font-bold text-sm transition-colors">Logout</button>
+    <header class="bg-indigo-600 text-white p-4 text-center relative shadow-md z-40 flex items-center justify-between px-6">
+        <h1 id="header-title" class="text-xl sm:text-2xl font-display font-bold tracking-wide">Speech Practice</h1>
+        <button id="logout-btn" onclick="logout()" class="hide bg-white/20 hover:bg-white/30 rounded-xl px-4 py-1.5 font-bold text-sm transition-colors shadow-sm">Logout</button>
     </header>
 
     <!-- CUSTOM MODAL -->
-    <div id="custom-modal" class="hide fixed inset-0 bg-black/50 z-[200] flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl p-6 max-w-sm w-full text-center animate-fade-in">
-            <h3 id="modal-title" class="text-xl font-bold text-gray-800 mb-2">Notice</h3>
-            <p id="modal-message" class="text-gray-600 mb-6 font-medium"></p>
-            <button onclick="closeModal()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-xl w-full">OK</button>
+    <div id="custom-modal" class="hide fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-[200] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-xl p-6 max-w-sm w-full text-center animate-fade-in border border-slate-100">
+            <h3 id="modal-title" class="font-display text-xl font-bold text-slate-800 mb-2">Notice</h3>
+            <p id="modal-message" class="text-slate-600 mb-6 font-semibold text-sm"></p>
+            <button onclick="closeModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-2xl w-full shadow-md shadow-indigo-200 transition-all">OK</button>
         </div>
     </div>
 
     <!-- CONFIRM MODAL -->
-    <div id="confirm-modal" class="hide fixed inset-0 bg-black/50 z-[200] flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl p-6 max-w-sm w-full text-center animate-fade-in">
-            <h3 id="confirm-title" class="text-xl font-bold text-gray-800 mb-2">Confirm</h3>
-            <p id="confirm-message" class="text-gray-600 mb-6 font-medium"></p>
-            <div class="flex gap-4">
-                <button onclick="closeConfirmModal(false)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-6 rounded-xl w-full">Cancel</button>
-                <button onclick="closeConfirmModal(true)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-xl w-full">Confirm</button>
+    <div id="confirm-modal" class="hide fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-[200] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-xl p-6 max-w-sm w-full text-center animate-fade-in border border-slate-100">
+            <h3 id="confirm-title" class="font-display text-xl font-bold text-slate-800 mb-2">Confirm</h3>
+            <p id="confirm-message" class="text-slate-600 mb-6 font-semibold text-sm"></p>
+            <div class="flex gap-3">
+                <button onclick="closeConfirmModal(false)" class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 px-6 rounded-2xl w-full transition-colors">Cancel</button>
+                <button onclick="closeConfirmModal(true)" class="bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 px-6 rounded-2xl w-full shadow-md shadow-rose-200 transition-colors">Confirm</button>
             </div>
         </div>
     </div>
 
     <!-- FLOATING 100 WORDS COUNTER -->
-    <div id="practiced-count-badge" class="hide fixed top-28 right-4 bg-green-500 text-white font-black px-4 py-2 rounded-2xl shadow-lg z-50 transform rotate-2 border-4 border-white">
+    <div id="practiced-count-badge" class="hide fixed top-20 right-6 bg-emerald-500 text-white font-black px-4 py-2 rounded-2xl shadow-lg z-50 transform rotate-2 border-2 border-white text-sm">
         ⭐ <span id="practiced-count-text">0</span> Words!
     </div>
 
@@ -80,83 +91,140 @@
     <main id="main-content" class="flex-1 p-6 sm:p-8 overflow-y-auto w-full relative">
 
         <!-- 1. CHILD LOGIN SCREEN -->
-        <div id="screen-parent-login" class="flex-col items-center max-w-md mx-auto w-full animate-fade-in flex">
-            <h2 class="text-3xl font-black text-gray-700 mb-8 w-full text-center">Child's Login</h2>
+        <div id="screen-parent-login" class="flex-col items-center max-w-md mx-auto w-full animate-fade-in flex pt-4">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3 shadow-sm">🚀</div>
+                <h2 class="font-display text-3xl font-bold text-slate-800">Child's Login</h2>
+                <p class="text-slate-400 text-sm font-semibold mt-1">Enter your name and pick your secret emoji!</p>
+            </div>
             
-            <div class="w-full space-y-6">
+            <div class="w-full space-y-5 bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-100">
                 <div>
-                    <label class="block text-gray-600 font-bold mb-2">Child's First Name</label>
-                    <input type="text" id="parent-name-input" class="w-full bg-white border-2 border-gray-200 rounded-xl px-4 py-3 text-lg font-bold text-gray-700 focus:outline-none focus:border-blue-400">
+                    <label class="block text-slate-500 text-sm font-bold mb-2">Child's First Name</label>
+                    <input type="text" id="parent-name-input" placeholder="e.g. Maya" class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-3 font-bold text-slate-700 focus:outline-none focus:border-indigo-400 transition-colors">
                 </div>
                 
                 <div>
-                    <label class="block text-gray-600 font-bold mb-2">Picture Password</label>
-                    <div id="parent-emoji-grid" class="grid grid-cols-4 gap-3 bg-white p-4 border-2 border-gray-200 rounded-xl">
+                    <label class="block text-slate-500 text-sm font-bold mb-2">Picture Password</label>
+                    <div id="parent-emoji-grid" class="grid grid-cols-4 gap-3 bg-slate-50 p-4 border-2 border-slate-100 rounded-2xl">
                         <!-- Emojis populated by JS -->
                     </div>
                 </div>
 
-                <button onclick="handleParentLogin()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-black text-xl py-4 rounded-xl shadow-lg transition-transform active:scale-95">
+                <button onclick="handleParentLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-display font-bold text-lg py-4 rounded-2xl shadow-lg shadow-indigo-100 transition-all active:scale-95">
                     Log In
                 </button>
                 
-                <div class="pt-8 text-center">
-                    <button onclick="navigate('clinicianLogin')" class="text-xs text-gray-400 hover:text-gray-500 transition-colors font-semibold">Clinician Access</button>
+                <div class="pt-2 text-center">
+                    <button onclick="navigate('clinicianLogin')" class="text-xs text-slate-400 hover:text-indigo-600 transition-colors font-bold uppercase tracking-wider">Clinician Portal Access</button>
                 </div>
             </div>
         </div>
 
         <!-- 2. CLINICIAN LOGIN SCREEN -->
-        <div id="screen-clinician-login" class="hide flex-col items-center max-w-md mx-auto w-full animate-fade-in">
-            <button onclick="navigate('parentLogin')" class="self-start text-gray-400 hover:text-gray-600 mb-6 font-bold text-lg">← Back</button>
-            <h2 class="text-2xl font-bold text-purple-700 mb-6 w-full text-center">Clinician Access</h2>
+        <div id="screen-clinician-login" class="hide flex-col items-center max-w-md mx-auto w-full animate-fade-in pt-6">
+            <button onclick="navigate('parentLogin')" class="self-start text-slate-400 hover:text-slate-600 mb-6 font-bold text-sm flex items-center gap-1">← Back to Child Login</button>
             
-            <form onsubmit="event.preventDefault(); handleClinicianLogin();" class="w-full space-y-4">
-                <input type="text" id="clinician-user" class="w-full bg-white border-2 border-gray-200 rounded-xl px-4 py-3 font-bold text-gray-700" placeholder="Username" required>
-                <input type="password" id="clinician-pass" class="w-full bg-white border-2 border-gray-200 rounded-xl px-4 py-3 font-bold text-gray-700" placeholder="Password" required>
-                <button type="submit" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-black text-lg py-3 rounded-xl shadow-md">Login</button>
-            </form>
+            <div class="w-full bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+                <h2 class="font-display text-2xl font-bold text-purple-700 mb-6 text-center">Clinician Portal</h2>
+                <form onsubmit="event.preventDefault(); handleClinicianLogin();" class="space-y-4">
+                    <div>
+                        <label class="block text-slate-500 text-sm font-bold mb-1">Username</label>
+                        <input type="text" id="clinician-user" class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-3 font-bold text-slate-700 focus:outline-none focus:border-purple-400" required>
+                    </div>
+                    <div>
+                        <label class="block text-slate-500 text-sm font-bold mb-1">Password</label>
+                        <input type="password" id="clinician-pass" class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-3 font-bold text-slate-700 focus:outline-none focus:border-purple-400" required>
+                    </div>
+                    <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-display font-bold text-lg py-3.5 rounded-2xl shadow-lg shadow-purple-100 transition-all mt-2">Login</button>
+                </form>
+            </div>
         </div>
 
         <!-- 3. PARENT DASHBOARD -->
         <div id="screen-parent-dashboard" class="hide flex-col items-center max-w-lg mx-auto w-full animate-fade-in">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border-2 border-blue-100 w-full mb-6">
-                <div class="flex justify-between items-start mb-2">
-                    <h2 class="text-2xl font-black text-gray-800">Welcome, <span id="dash-child-name" class="text-blue-500"></span>!</h2>
-                </div>
-                <div id="dash-note-container" class="bg-yellow-50 border border-yellow-200 p-4 rounded-xl mt-4 hide">
-                    <p class="text-sm font-bold text-yellow-800 mb-1">Note from Clinician:</p>
-                    <p id="dash-note-text" class="text-gray-700"></p>
+            
+            <!-- WEEKLY PRACTICE TRACKER -->
+            <div id="weekly-tracker-section" class="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 w-full mb-6 hide">
+                <h3 class="font-display text-xs font-bold text-indigo-600 uppercase tracking-widest mb-3 text-center">Weekly Practice Tracker</h3>
+                <div id="weekly-tracker-days" class="grid grid-cols-7 gap-1 sm:gap-2">
+                    <!-- Populated dynamically -->
                 </div>
             </div>
 
-            <!-- Collectible View Buttons -->
-            <div id="parent-collections-container" class="w-full flex justify-center flex-wrap gap-2 mb-6 hide"></div>
+            <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-100 w-full mb-6">
+                <div class="flex justify-between items-start mb-2">
+                    <h2 class="font-display text-2xl font-bold text-slate-800">Welcome back, <span id="dash-child-name" class="text-indigo-600"></span>!</h2>
+                </div>
+                <div id="dash-note-container" class="bg-amber-50/70 border border-amber-200/60 p-4 rounded-2xl mt-4 hide">
+                    <p class="text-xs font-bold text-amber-800 uppercase tracking-wider mb-1">Note from Clinician:</p>
+                    <p id="dash-note-text" class="text-sm text-slate-700 mb-3 font-medium"></p>
+                    <button onclick="openFeedbackModal()" class="bg-amber-200/70 hover:bg-amber-200 text-amber-900 font-bold px-3 py-1.5 rounded-xl text-xs transition-colors">Send Feedback</button>
+                </div>
+                <div id="dash-note-container-no-note" class="mt-4 hide">
+                    <button onclick="openFeedbackModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold px-3 py-1.5 rounded-xl text-xs transition-colors">Send Feedback to Clinician</button>
+                </div>
+            </div>
 
-            <div class="w-full text-center mb-4">
-                <h3 class="text-xl font-bold text-gray-700 mb-4">Choose a list to practice:</h3>
+            <div class="w-full mb-4">
+                <h3 class="font-display text-lg font-bold text-slate-700 px-1">Choose a Word List</h3>
             </div>
             
-            <div id="parent-lists-container" class="w-full space-y-4"></div>
+            <div id="parent-lists-container" class="w-full space-y-3"></div>
+        </div>
+
+        <!-- FEEDBACK MODAL -->
+        <div id="feedback-modal" class="hide fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-[200] flex items-center justify-center p-4">
+            <div class="bg-white rounded-3xl shadow-xl p-6 max-w-md w-full animate-fade-in text-left border border-slate-100">
+                <h3 class="font-display text-xl font-bold text-slate-800 mb-1">Send Feedback</h3>
+                <p class="text-xs text-slate-400 font-semibold mb-4">Let your clinician know how practice went!</p>
+                
+                <div class="space-y-2.5 mb-4">
+                    <label class="flex items-center gap-2.5 text-sm font-semibold text-slate-600 cursor-pointer bg-slate-50 p-2.5 rounded-2xl border border-slate-100">
+                        <input type="checkbox" name="fb-option" value="This was easy!" class="w-4 h-4 text-indigo-600 rounded">
+                        This was easy!
+                    </label>
+                    <label class="flex items-center gap-2.5 text-sm font-semibold text-slate-600 cursor-pointer bg-slate-50 p-2.5 rounded-2xl border border-slate-100">
+                        <input type="checkbox" name="fb-option" value="A word was hard and we skipped it" class="w-4 h-4 text-indigo-600 rounded">
+                        A word was hard and we skipped it
+                    </label>
+                    <label class="flex items-center gap-2.5 text-sm font-semibold text-slate-600 cursor-pointer bg-slate-50 p-2.5 rounded-2xl border border-slate-100">
+                        <input type="checkbox" name="fb-option" value="Too many words, lost interest" class="w-4 h-4 text-indigo-600 rounded">
+                        Too many words, lost interest
+                    </label>
+                </div>
+
+                <textarea id="feedback-custom-text" class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl p-3 text-sm font-medium text-slate-700 resize-none h-20 mb-4 focus:outline-none focus:border-indigo-300" placeholder="Write custom notes here..."></textarea>
+                
+                <div class="flex gap-3">
+                    <button onclick="closeFeedbackModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 rounded-2xl transition-colors">Cancel</button>
+                    <button onclick="submitFeedback()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-2xl shadow-md shadow-indigo-100 transition-colors">Send</button>
+                </div>
+            </div>
         </div>
 
         <!-- 4. PRACTICE SESSION -->
         <div id="screen-practice-session" class="hide flex-col w-full h-full animate-fade-in relative">
             <div class="absolute top-4 left-4 z-10">
-                <span class="bg-white/90 backdrop-blur px-4 py-2 rounded-xl font-bold text-gray-600 shadow-sm border-2 border-gray-100">Word <span id="practice-current-num" class="text-blue-500">1</span> of <span id="practice-total-num">10</span></span>
+                <span class="bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl font-bold text-slate-600 shadow-sm border border-slate-100 text-sm">Word <span id="practice-current-num" class="text-indigo-600">1</span> of <span id="practice-total-num">10</span></span>
             </div>
             <div class="absolute top-4 right-4 z-10">
-                <button onclick="quitPractice()" class="bg-red-100/90 backdrop-blur text-red-600 font-bold px-4 py-2 rounded-xl shadow-sm border-2 border-red-200">Quit</button>
+                <button onclick="quitPractice()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-4 py-2 rounded-2xl shadow-sm border border-rose-100 text-sm transition-colors">Quit</button>
             </div>
 
-            <div class="flex-1 w-full flex items-center justify-center p-2 relative h-full">
-                <img id="practice-image" src="" alt="Practice Word" class="w-full h-full object-contain max-h-[80vh]" onerror="this.src='https://placehold.co/400x400/f8fafc/94a3b8?text=Image+Missing'">
-                
-                <h2 id="practice-word-text" class="absolute bottom-6 left-6 text-4xl sm:text-5xl font-black text-gray-800 capitalize tracking-wide bg-white/90 backdrop-blur px-6 py-3 rounded-3xl shadow-lg border-2 border-gray-100 z-10"></h2>
+            <div class="flex-1 w-full flex flex-col items-center justify-center p-2 relative h-full">
+                <!-- Clinician Hint Box -->
+                <div id="practice-hint-container" class="hide mb-4 max-w-md w-full bg-amber-50 border border-amber-200 text-amber-900 font-bold px-6 py-3.5 rounded-2xl shadow-sm text-center text-lg z-20">
+                    <span id="practice-hint-text"></span>
+                </div>
+
+                <div class="relative w-full flex-1 flex items-center justify-center">
+                    <img id="practice-image" src="" alt="Practice Word" class="w-full h-full object-contain max-h-[72vh]" onerror="this.src='https://placehold.co/400x400/f8fafc/94a3b8?text=Image+Missing'">
+                </div>
             </div>
 
-            <button onclick="nextPracticeWord()" class="absolute bottom-6 right-6 bg-blue-500 hover:bg-blue-600 text-white w-20 h-20 sm:w-24 sm:h-24 rounded-full shadow-2xl flex items-center justify-center transition-transform active:scale-90 border-4 border-blue-200 z-20">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 sm:h-12 sm:w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="4">
+            <button onclick="nextPracticeWord()" class="absolute bottom-6 right-6 bg-indigo-600 hover:bg-indigo-700 text-white w-20 h-20 sm:w-24 sm:h-24 rounded-full shadow-xl flex items-center justify-center transition-transform active:scale-90 border-4 border-white z-20">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 sm:h-12 sm:w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
             </button>
@@ -168,159 +236,149 @@
             <div id="prize-container" class="fixed inset-0 z-[60] flex items-center justify-center pointer-events-none"></div>
             
             <div class="absolute top-4 right-4 z-[110]">
-                <button onclick="navigate('parentDashboard')" class="bg-white/90 hover:bg-white text-gray-800 font-bold px-5 py-2.5 rounded-xl shadow-md border-2 border-gray-200 transition-transform active:scale-95">Back to Home</button>
+                <button onclick="navigate('parentDashboard')" class="bg-white hover:bg-slate-50 text-slate-700 font-bold px-5 py-2.5 rounded-2xl shadow-sm border border-slate-200 transition-transform active:scale-95 text-sm">Back to Home</button>
             </div>
 
             <div id="practice-complete-content" class="z-40 pointer-events-none p-8">
                 <div class="text-6xl mb-4 animate-bounce">🎉</div>
-                <h2 class="text-4xl sm:text-5xl font-black text-blue-600 mb-2 drop-shadow-sm">Great Job!</h2>
-                <p class="text-xl sm:text-2xl text-gray-700 font-bold">You finished this list!</p>
+                <h2 class="font-display text-4xl sm:text-5xl font-bold text-indigo-600 mb-2">Great Job!</h2>
+                <p class="text-xl sm:text-2xl text-slate-600 font-semibold">You finished this list!</p>
             </div>
-
-            <!-- Collectible Selection UI -->
-            <div id="collectible-selection-ui" class="hide z-[110] bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-xl max-w-lg w-full mx-4">
-                <h2 id="collectible-title" class="text-3xl font-black text-blue-600 mb-6">Choose a new friend!</h2>
-                <div id="collectible-options" class="flex justify-center gap-6 mb-8"></div>
-                <p class="text-gray-500 font-medium text-sm">Tap one to add it to your collection!</p>
-            </div>
-        </div>
-
-        <!-- COLLECTION VIEW -->
-        <div id="screen-collection-view" class="hide flex-col w-full h-full animate-fade-in relative p-4 bg-gray-900">
-            <button onclick="navigate('parentDashboard')" class="absolute top-4 left-4 bg-white/90 backdrop-blur px-4 py-2 rounded-xl font-bold text-gray-800 shadow-sm border-2 border-gray-100 z-20">← Back</button>
-            <h2 id="collection-view-title" class="text-3xl font-black text-center text-white mb-4 z-10 drop-shadow-md mt-16 sm:mt-0">My Collection</h2>
-            <div id="collection-scene" class="flex-1 rounded-3xl border-4 shadow-inner relative overflow-hidden flex flex-wrap content-start p-6 gap-6 text-6xl"></div>
         </div>
 
         <!-- 6. CLINICIAN DASHBOARD -->
-        <div id="screen-clinician-dashboard" class="hide flex-col w-full max-w-4xl mx-auto animate-fade-in">
+        <div id="screen-clinician-dashboard" class="hide flex-col w-full max-w-4xl mx-auto animate-fade-in pt-2">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-black text-gray-800">My Clients</h2>
-                <button onclick="openNewClientModal()" class="bg-purple-500 hover:bg-purple-600 text-white font-bold px-4 py-2 rounded-lg shadow-sm">+ New Client</button>
+                <h2 class="font-display text-2xl font-bold text-slate-800">My Clients</h2>
+                <button onclick="openNewClientModal()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-4 py-2.5 rounded-2xl shadow-sm shadow-purple-100 text-sm transition-colors">+ New Client</button>
             </div>
             
             <div id="clinician-client-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
         </div>
 
         <!-- 7. CLINICIAN CLIENT EDITOR -->
-        <div id="screen-client-editor" class="hide flex-col w-full max-w-2xl mx-auto animate-fade-in">
+        <div id="screen-client-editor" class="hide flex-col w-full max-w-2xl mx-auto animate-fade-in pb-12 pt-2">
             <div class="flex justify-between items-center mb-6">
-                <button onclick="navigate('clinicianDashboard')" class="text-gray-400 hover:text-gray-600 font-bold text-lg">← Back to Clients</button>
-                <button id="delete-client-btn" onclick="deleteCurrentClient()" class="text-red-500 hover:text-red-600 font-bold text-sm bg-red-50 px-3 py-1 rounded-lg">Delete Client</button>
+                <button onclick="navigate('clinicianDashboard')" class="text-slate-400 hover:text-slate-600 font-bold text-sm flex items-center gap-1">← Back to Clients</button>
+                <button id="delete-client-btn" onclick="deleteCurrentClient()" class="text-rose-500 hover:text-rose-600 font-bold text-xs bg-rose-50 px-3 py-1.5 rounded-xl border border-rose-100">Delete Client</button>
             </div>
 
-            <div class="bg-white p-6 rounded-2xl shadow-sm border-2 border-gray-100 mb-6">
-                <h3 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Client Profile</h3>
+            <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-100 mb-6">
+                <h3 class="font-display text-xl font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">Client Profile</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label class="block text-sm text-gray-500 font-bold mb-1">Child's First Name</label>
-                        <input type="text" id="edit-client-name" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-3 py-2 font-bold text-gray-700">
+                        <label class="block text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Child's First Name</label>
+                        <input type="text" id="edit-client-name" class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-2.5 font-bold text-slate-700 focus:outline-none focus:border-indigo-400">
                     </div>
                     <div>
-                        <label class="block text-sm text-gray-500 font-bold mb-1">Picture Password Emoji</label>
+                        <label class="block text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Picture Password Emoji</label>
                         <div class="relative inline-block" id="emoji-picker-container">
-                            <button type="button" onclick="toggleEmojiPicker(event)" id="edit-client-emoji-display" class="text-3xl bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-1">🐎</button>
+                            <button type="button" onclick="toggleEmojiPicker(event)" id="edit-client-emoji-display" class="text-2xl bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-1.5">🐎</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-sm text-gray-500 font-bold mb-1">Note from Clinician (pop-up on login)</label>
-                    <textarea id="edit-client-note" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-3 py-2 font-medium text-gray-700 resize-none h-20" placeholder="Instructions for parent/child practice..."></textarea>
+                    <label class="block text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Note from Clinician (pop-up on login)</label>
+                    <textarea id="edit-client-note" class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl p-3 text-sm font-medium text-slate-700 resize-none h-20 focus:outline-none focus:border-indigo-400" placeholder="Instructions for practice..."></textarea>
                 </div>
 
-                <div class="bg-green-50 p-4 rounded-xl border border-green-200 flex items-center justify-between mb-4">
+                <div class="bg-emerald-50/60 p-4 rounded-2xl border border-emerald-100 flex items-center justify-between mb-4">
                     <div>
-                        <label class="flex items-center gap-2 font-bold text-green-800 cursor-pointer">
-                            <input type="checkbox" id="edit-show-100" class="w-5 h-5 text-green-600 rounded">
+                        <label class="flex items-center gap-2.5 font-bold text-emerald-900 cursor-pointer text-sm">
+                            <input type="checkbox" id="edit-show-100" class="w-4 h-4 text-emerald-600 rounded">
                             Show "100 Words" Counter
                         </label>
-                        <p class="text-sm text-green-600 mt-1">Current Count: <span id="edit-100-count" class="font-black text-lg">0</span></p>
+                        <p class="text-xs text-emerald-600 mt-1 font-semibold">Current Count: <span id="edit-100-count" class="font-black text-base">0</span></p>
                     </div>
-                    <button onclick="reset100Count()" class="bg-white border-2 border-green-200 text-green-700 font-bold px-3 py-1 rounded-lg text-sm hover:bg-green-100">Reset to 0</button>
+                    <button onclick="reset100Count()" class="bg-white border border-emerald-200 text-emerald-700 font-bold px-3 py-1.5 rounded-xl text-xs hover:bg-emerald-50 transition-colors">Reset to 0</button>
                 </div>
 
-                <div class="bg-purple-50 p-4 rounded-xl border border-purple-200">
-                    <label class="block text-sm text-purple-800 font-bold mb-2">Collectible Rewards Access</label>
-                    <div class="flex flex-wrap gap-4">
-                        <label class="flex items-center gap-1 font-bold text-sm text-purple-700 cursor-pointer">
-                            <input type="checkbox" id="edit-reward-aquarium" class="w-5 h-5 rounded text-purple-600"> Aquarium
-                        </label>
-                        <label class="flex items-center gap-1 font-bold text-sm text-purple-700 cursor-pointer">
-                            <input type="checkbox" id="edit-reward-zoo" class="w-5 h-5 rounded text-purple-600"> Zoo
-                        </label>
-                        <label class="flex items-center gap-1 font-bold text-sm text-purple-700 cursor-pointer">
-                            <input type="checkbox" id="edit-reward-character" class="w-5 h-5 rounded text-purple-600"> Character Room
-                        </label>
+                <!-- WEEKLY TRACKER CONFIGURATION -->
+                <div class="bg-indigo-50/60 p-4 rounded-2xl border border-indigo-100 mb-2">
+                    <label class="flex items-center gap-2.5 font-bold text-indigo-900 cursor-pointer mb-3 text-sm">
+                        <input type="checkbox" id="edit-show-weekly-tracker" class="w-4 h-4 text-indigo-600 rounded">
+                        Show Weekly Practice Tracker on Dashboard
+                    </label>
+                    <div>
+                        <label class="block text-xs text-indigo-700 font-bold uppercase tracking-wider mb-1">Day of Session (Reset Day)</label>
+                        <select id="edit-session-day" class="w-full bg-white border-2 border-indigo-100 rounded-2xl px-3 py-2 font-bold text-indigo-900 outline-none text-sm">
+                            <option value="monday">Monday</option>
+                            <option value="tuesday">Tuesday</option>
+                            <option value="wednesday">Wednesday</option>
+                            <option value="thursday">Thursday</option>
+                        </select>
                     </div>
                 </div>
             </div>
 
             <!-- WORD LISTS MANAGER -->
-            <div class="bg-gray-50 p-6 rounded-2xl border-2 border-gray-100 mb-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 border-b pb-2 gap-2">
-                    <h3 class="text-xl font-bold text-gray-700">Word Lists</h3>
-                    <button onclick="addNewWordList()" class="bg-purple-100 text-purple-600 hover:bg-purple-200 font-bold text-sm px-3 py-1 rounded-lg">+ Create New List</button>
+            <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-100 mb-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 border-b border-slate-100 pb-3 gap-2">
+                    <h3 class="font-display text-xl font-bold text-slate-800">Word Lists</h3>
+                    <button onclick="addNewWordList()" class="bg-purple-50 text-purple-600 hover:bg-purple-100 font-bold text-xs px-3 py-1.5 rounded-xl transition-colors">+ Create New List</button>
                 </div>
 
                 <div class="flex gap-2 overflow-x-auto pb-2 mb-4" id="edit-list-tabs"></div>
 
-                <div id="list-editor-container" class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hide">
+                <div id="list-editor-container" class="bg-slate-50/70 p-4 sm:p-6 rounded-2xl border border-slate-200/60 shadow-sm hide">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                         <div>
-                            <label class="block text-sm text-gray-500 font-bold mb-1">List Name</label>
-                            <input type="text" id="edit-list-name" oninput="updateCurrentListName()" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-3 py-2 font-bold text-gray-700">
+                            <label class="block text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">List Name</label>
+                            <input type="text" id="edit-list-name" oninput="updateCurrentListName()" class="w-full bg-white border-2 border-slate-100 rounded-2xl px-3 py-2 font-bold text-slate-700 focus:outline-none focus:border-indigo-400">
                         </div>
                         <div>
-                            <label class="block text-sm text-gray-500 font-bold mb-1">Completion Prize</label>
-                            <select id="edit-list-prize" onchange="updateCurrentListPrize()" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-3 py-2 font-bold text-gray-700 outline-none">
+                            <label class="block text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Completion Prize</label>
+                            <select id="edit-list-prize" onchange="updateCurrentListPrize()" class="w-full bg-white border-2 border-slate-100 rounded-2xl px-3 py-2 font-bold text-slate-700 outline-none text-sm">
                                 <option value="none">None</option>
                                 <option value="bubbles">🫧 Pop the Bubbles</option>
                                 <option value="dance">💃 Silly Dance Party</option>
-                                <option value="aquarium">🐠 Collectible Aquarium</option>
-                                <option value="zoo">🦁 Collectible Zoo</option>
-                                <option value="character">🎩 Collectible Character</option>
                             </select>
                         </div>
                     </div>
+
+                    <div class="mb-4">
+                        <label class="block text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Flashcard Hint Text (Optional)</label>
+                        <input type="text" id="edit-list-hint" oninput="updateCurrentListHint()" class="w-full bg-white border-2 border-slate-100 rounded-2xl px-3 py-2 font-medium text-slate-700 focus:outline-none focus:border-indigo-400" placeholder="e.g. I see a _____ or lift your tongue!">
+                    </div>
                     
                     <div class="flex justify-between items-center mb-2">
-                        <span class="text-sm font-bold bg-blue-100 text-blue-700 px-2 py-1 rounded-lg"><span id="edit-assign-count">0</span> Words in List</span>
-                        <button onclick="deleteCurrentList()" class="text-sm text-red-500 font-bold hover:underline">Delete List</button>
+                        <span class="text-xs font-bold bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-xl"><span id="edit-assign-count">0</span> Words in List</span>
+                        <button onclick="deleteCurrentList()" class="text-xs text-rose-500 font-bold hover:underline">Delete List</button>
                     </div>
 
-                    <div class="flex flex-col sm:flex-row gap-2 mb-3 bg-gray-50 p-3 rounded-lg border border-gray-100">
+                    <div class="flex flex-col sm:flex-row gap-2 mb-3 bg-white p-3 rounded-2xl border border-slate-100">
                         <div class="flex-1">
-                            <label class="block text-xs text-gray-500 font-bold mb-1">Sound</label>
-                            <select id="edit-assign-sound" class="w-full bg-white border border-gray-200 rounded-lg px-2 py-1 font-bold text-sm text-gray-700" onchange="renderSubcategoryOptions()"></select>
+                            <label class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Sound</label>
+                            <select id="edit-assign-sound" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 font-bold text-xs text-slate-700 outline-none" onchange="renderSubcategoryOptions()"></select>
                         </div>
                         <div class="flex-1">
-                            <label class="block text-xs text-gray-500 font-bold mb-1">Category</label>
-                            <select id="edit-assign-position" class="w-full bg-white border border-gray-200 rounded-lg px-2 py-1 font-bold text-sm text-gray-700" onchange="renderGroupOptions()"></select>
+                            <label class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Category</label>
+                            <select id="edit-assign-position" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 font-bold text-xs text-slate-700 outline-none" onchange="renderGroupOptions()"></select>
                         </div>
                         <div class="flex-1 hide" id="group-container">
-                            <label class="block text-xs text-gray-500 font-bold mb-1">Group</label>
-                            <select id="edit-assign-group" class="w-full bg-white border border-gray-200 rounded-lg px-2 py-1 font-bold text-sm text-gray-700" onchange="renderDictionaryWords()"></select>
+                            <label class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Group</label>
+                            <select id="edit-assign-group" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 font-bold text-xs text-slate-700 outline-none" onchange="renderDictionaryWords()"></select>
                         </div>
                     </div>
 
-                    <div class="flex justify-between items-center mb-2">
-                        <button onclick="resetAllWords()" class="text-xs font-bold text-red-500 hover:underline">Reset All</button>
+                    <div class="flex justify-between items-center mb-2 px-1">
+                        <button onclick="resetAllWords()" class="text-xs font-bold text-rose-500 hover:underline">Reset All</button>
                         <div class="flex gap-3">
                             <button onclick="deselectAllWords()" class="text-xs font-bold text-purple-600 hover:underline">Deselect All</button>
                             <button onclick="selectAllWords()" class="text-xs font-bold text-purple-600 hover:underline">Select All</button>
                         </div>
                     </div>
 
-                    <div id="edit-dictionary-words" class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-gray-50 p-3 border border-gray-200 rounded-xl max-h-48 overflow-y-auto"></div>
+                    <div id="edit-dictionary-words" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 bg-white p-3.5 border border-slate-200 rounded-2xl max-h-48 overflow-y-auto"></div>
                 </div>
             </div>
 
-            <button onclick="saveClientProfile()" class="w-full bg-green-500 hover:bg-green-600 text-white font-black text-xl py-4 rounded-xl shadow-lg mb-8">Save Profile & Assignments</button>
+            <button onclick="saveClientProfile()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-display font-bold text-lg py-4 rounded-2xl shadow-lg shadow-emerald-100 transition-all mb-8">Save Profile & Assignments</button>
 
             <!-- Logs Section -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border-2 border-gray-100 mb-12">
-                <h3 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">Practice Logs</h3>
+            <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-100">
+                <h3 class="font-display text-xl font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">Practice Logs & Feedback</h3>
                 <div id="client-logs-container" class="space-y-3 max-h-64 overflow-y-auto"></div>
             </div>
         </div>
@@ -328,14 +386,14 @@
     </main>
 
     <!-- LOADING OVERLAY -->
-    <div id="loading-overlay" class="fixed inset-0 bg-white/80 z-[300] flex items-center justify-center hide">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-blue-500"></div>
+    <div id="loading-overlay" class="fixed inset-0 bg-white/80 backdrop-blur-xs z-[300] flex items-center justify-center hide">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-indigo-600"></div>
     </div>
 
     <!-- FIREBASE AND APP LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc, addDoc, serverTimestamp, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCpcWQaxPsPWY-0w9fU28B9LLV8rsK--lU",
@@ -368,11 +426,6 @@
         let wordsPracticedThisSession = [];
         let currentSessionLogId = null;
 
-        const SEA_CREATURES = ['🐠','🐟','🐬','🐳','🐙','🦑','🦀','🐡','🐢','🦈','🦐','🦞','🦦','🦭'];
-        const LAND_CREATURES = ['🐅','🐘','🦓','🦒','🐒','🦁','🐼','🐨','🦍','🦘','🦏','🦛','🐊','🐆'];
-        const CHAR_BASES = ['🐶','🐱','🐻','🐰','🦊','🐸','🐷','🐭','🐼'];
-        const CHAR_ACCESSORIES = ['🎩','🕶️','🧣','👑','🎀','🎒','🪄','🎸','🧢','👓','🎧'];
-
         const els = {
             headerTitle: document.getElementById('header-title'),
             logoutBtn: document.getElementById('logout-btn'),
@@ -384,8 +437,7 @@
                 clientEditor: document.getElementById('screen-client-editor'),
                 parentDashboard: document.getElementById('screen-parent-dashboard'),
                 practiceSession: document.getElementById('screen-practice-session'),
-                practiceComplete: document.getElementById('screen-practice-complete'),
-                collectionView: document.getElementById('screen-collection-view')
+                practiceComplete: document.getElementById('screen-practice-complete')
             }
         };
 
@@ -549,19 +601,13 @@
             
             if (['parentLogin', 'clinicianLogin'].includes(screenId)) {
                 els.headerTitle.innerText = "Speech Practice";
-                els.headerTitle.className = "text-2xl sm:text-3xl font-black tracking-wide";
-                els.headerTitle.parentElement.className = "bg-blue-500 text-white p-4 text-center relative shadow-md z-40";
                 els.logoutBtn.classList.add('hide');
                 currentUserRole = null;
             } else if (screenId.includes('clinician')) {
                 els.headerTitle.innerText = "Clinician Portal";
-                els.headerTitle.className = "text-xl sm:text-2xl font-bold tracking-wide";
-                els.headerTitle.parentElement.className = "bg-purple-600 text-white p-4 text-center relative shadow-md z-40";
                 els.logoutBtn.classList.remove('hide');
             } else {
                 els.headerTitle.innerText = "Speech Practice";
-                els.headerTitle.className = "text-xl sm:text-2xl font-bold tracking-wide";
-                els.headerTitle.parentElement.className = "bg-blue-600 text-white p-4 text-center relative shadow-md z-40";
                 els.logoutBtn.classList.remove('hide');
             }
         };
@@ -585,15 +631,15 @@
             EmojisList.forEach(emoji => {
                 const btn = document.createElement('button');
                 btn.type = 'button';
-                btn.className = "text-3xl bg-gray-50 hover:bg-blue-50 rounded-xl p-2 transition-all duration-200 border-4 border-transparent focus:outline-none";
+                btn.className = "text-3xl bg-white hover:bg-indigo-50 rounded-2xl p-3 transition-all duration-200 border-2 border-transparent focus:outline-none shadow-xs";
                 btn.innerText = emoji;
                 btn.onclick = () => {
                     Array.from(grid.children).forEach(c => {
-                        c.classList.remove('border-blue-500', 'bg-blue-200', 'scale-125', 'shadow-xl', '-translate-y-2');
-                        c.classList.add('bg-gray-50');
+                        c.classList.remove('border-indigo-600', 'bg-indigo-50', 'scale-110', 'shadow-md');
+                        c.classList.add('bg-white');
                     });
-                    btn.classList.remove('bg-gray-50');
-                    btn.classList.add('border-blue-500', 'bg-blue-200', 'scale-125', 'shadow-xl', '-translate-y-2');
+                    btn.classList.remove('bg-white');
+                    btn.classList.add('border-indigo-600', 'bg-indigo-50', 'scale-110', 'shadow-md');
                     selectedLoginEmoji = emoji;
                 };
                 grid.appendChild(btn);
@@ -637,12 +683,14 @@
                     
                     if (foundClient.note) {
                         document.getElementById('dash-note-container').classList.remove('hide');
+                        document.getElementById('dash-note-container-no-note').classList.add('hide');
                         document.getElementById('dash-note-text').innerText = foundClient.note;
                     } else {
                         document.getElementById('dash-note-container').classList.add('hide');
+                        document.getElementById('dash-note-container-no-note').classList.remove('hide');
                     }
                     
-                    renderParentCollectionsUI();
+                    await renderWeeklyTracker();
                     renderParentWordLists();
                     navigate('parentDashboard');
                 } else {
@@ -651,6 +699,101 @@
             } catch (error) {
                 console.error("Login error", error);
                 showModal("System Error", "Could not connect to database.");
+            }
+            showLoading(false);
+        };
+
+        const renderWeeklyTracker = async () => {
+            const trackerSection = document.getElementById('weekly-tracker-section');
+            const daysContainer = document.getElementById('weekly-tracker-days');
+            
+            if (!activeClient.showWeeklyTracker) {
+                trackerSection.classList.add('hide');
+                return;
+            }
+            trackerSection.classList.remove('hide');
+            daysContainer.innerHTML = '';
+
+            const sessionDay = activeClient.sessionDay || 'tuesday';
+            const dayMap = { sunday: 0, monday: 1, tuesday: 2, wednesday: 3, thursday: 4, friday: 5, saturday: 6 };
+            const sessionDayIndex = dayMap[sessionDay];
+            let daysList = [0, 1, 2, 3, 4, 5, 6];
+
+            let logs = [];
+            try {
+                const logsSnap = await getDocs(collection(db, 'clients', activeClient.id, 'logs'));
+                logsSnap.forEach(d => logs.push(d.data()));
+            } catch(e) { console.error(e); }
+
+            const now = new Date();
+            let currentDayOfWeek = now.getDay();
+            let daysSinceSession = (currentDayOfWeek - sessionDayIndex + 7) % 7;
+            let currentWeekSessionDate = new Date(now);
+            currentWeekSessionDate.setDate(now.getDate() - daysSinceSession);
+            currentWeekSessionDate.setHours(0,0,0,0);
+
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+            daysList.forEach(dIndex => {
+                let targetDate = new Date(currentWeekSessionDate);
+                let diffFromSession = (dIndex - sessionDayIndex + 7) % 7;
+                targetDate.setDate(currentWeekSessionDate.getDate() + diffFromSession);
+                
+                const dateStringStr = targetDate.toDateString();
+                const practicedCount = logs.filter(l => {
+                    if (l.isFeedback) return false;
+                    const lDate = new Date(l.date);
+                    return lDate.toDateString() === dateStringStr;
+                }).reduce((acc, l) => acc + (l.wordsCompleted || (l.words ? l.words.length : 0)), 0);
+
+                const isChecked = practicedCount >= 2;
+
+                const dayCard = document.createElement('div');
+                dayCard.className = `flex flex-col items-center justify-center p-2 rounded-2xl border ${isChecked ? 'bg-emerald-50 border-emerald-300 text-emerald-800' : 'bg-slate-50 border-slate-100 text-slate-400'}`;
+                dayCard.innerHTML = `
+                    <span class="text-[10px] sm:text-xs font-bold uppercase">${dayNames[dIndex]}</span>
+                    <span class="text-base sm:text-lg mt-1">${isChecked ? '✅' : '·'}</span>
+                `;
+                daysContainer.appendChild(dayCard);
+            });
+        };
+
+        window.openFeedbackModal = () => {
+            document.getElementById('feedback-custom-text').value = '';
+            document.querySelectorAll('input[name="fb-option"]').forEach(cb => cb.checked = false);
+            document.getElementById('feedback-modal').classList.remove('hide');
+        };
+
+        window.closeFeedbackModal = () => {
+            document.getElementById('feedback-modal').classList.add('hide');
+        };
+
+        window.submitFeedback = async () => {
+            const checkboxes = document.querySelectorAll('input[name="fb-option"]:checked');
+            let selectedOptions = Array.from(checkboxes).map(cb => cb.value);
+            const customText = document.getElementById('feedback-custom-text').value.trim();
+
+            let fullMsg = selectedOptions.join(', ');
+            if (customText) {
+                fullMsg += fullMsg ? ` - ${customText}` : customText;
+            }
+
+            if (!fullMsg) {
+                showModal("Feedback", "Please select an option or write a note.");
+                return;
+            }
+
+            showLoading(true);
+            try {
+                await addDoc(collection(db, 'clients', activeClient.id, 'logs'), {
+                    date: new Date().toISOString(),
+                    isFeedback: true,
+                    message: fullMsg
+                });
+                showModal("Thank You!", "Your feedback has been sent to your clinician.");
+                closeFeedbackModal();
+            } catch(e) {
+                showModal("Error", "Could not send feedback.");
             }
             showLoading(false);
         };
@@ -670,78 +813,6 @@
 
             return `${IMAGE_BASE_URL}/${soundPath}/${positionPath}/${groupPath}${safeWord}.svg`;
         };
-        
-        const renderParentCollectionsUI = () => {
-            const container = document.getElementById('parent-collections-container');
-            container.innerHTML = '';
-            let hasAny = false;
-
-            if (activeClient.rewardAquarium) {
-                hasAny = true;
-                container.innerHTML += `<button onclick="openCollection('aquarium')" class="bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold px-4 py-2 rounded-xl shadow-sm text-sm border-2 border-blue-200">🌊 View Aquarium</button>`;
-            }
-            if (activeClient.rewardZoo) {
-                hasAny = true;
-                container.innerHTML += `<button onclick="openCollection('zoo')" class="bg-green-100 hover:bg-green-200 text-green-700 font-bold px-4 py-2 rounded-xl shadow-sm text-sm border-2 border-green-200">🌴 View Zoo</button>`;
-            }
-            if (activeClient.rewardCharacter) {
-                hasAny = true;
-                container.innerHTML += `<button onclick="openCollection('character')" class="bg-purple-100 hover:bg-purple-200 text-purple-700 font-bold px-4 py-2 rounded-xl shadow-sm text-sm border-2 border-purple-200">🏠 View Room</button>`;
-            }
-
-            if (hasAny) container.classList.remove('hide');
-            else container.classList.add('hide');
-        };
-
-        window.openCollection = (type) => {
-            const scene = document.getElementById('collection-scene');
-            const title = document.getElementById('collection-view-title');
-            scene.innerHTML = '';
-
-            if (type === 'aquarium') {
-                title.innerText = "My Aquarium";
-                scene.className = "flex-1 rounded-3xl border-4 border-blue-300 shadow-inner relative overflow-hidden flex flex-wrap content-start p-6 gap-6 text-6xl bg-gradient-to-b from-blue-300 to-blue-600";
-                const items = activeClient.collectionAquarium || [];
-                items.forEach(item => {
-                    const el = document.createElement('div');
-                    el.innerText = item;
-                    el.className = "animate-fade-in";
-                    scene.appendChild(el);
-                });
-            } else if (type === 'zoo') {
-                title.innerText = "My Zoo";
-                scene.className = "flex-1 rounded-3xl border-4 border-green-400 shadow-inner relative overflow-hidden flex flex-wrap content-start p-6 gap-6 text-6xl bg-gradient-to-b from-green-200 to-green-500";
-                const items = activeClient.collectionZoo || [];
-                items.forEach(item => {
-                    const el = document.createElement('div');
-                    el.innerText = item;
-                    el.className = "animate-fade-in";
-                    scene.appendChild(el);
-                });
-            } else if (type === 'character') {
-                title.innerText = "My Room";
-                scene.className = "flex-1 rounded-3xl border-4 border-purple-300 shadow-inner relative overflow-hidden flex items-center justify-center p-6 bg-gradient-to-b from-purple-100 to-purple-300";
-                const charData = activeClient.collectionCharacter || { base: '', accessories: [] };
-                if (charData.base) {
-                    const baseEl = document.createElement('div');
-                    baseEl.innerText = charData.base;
-                    baseEl.className = "text-[12rem] relative animate-fade-in";
-                    
-                    charData.accessories.forEach((acc, i) => {
-                        const accEl = document.createElement('div');
-                        accEl.innerText = acc;
-                        accEl.className = "absolute text-6xl";
-                        accEl.style.top = `${-20 + (i * 10)}%`;
-                        accEl.style.left = `${-30 + (i * 40)}%`;
-                        baseEl.appendChild(accEl);
-                    });
-                    scene.appendChild(baseEl);
-                } else {
-                    scene.innerHTML = '<p class="text-xl text-purple-600 font-bold">Earn a character by practicing!</p>';
-                }
-            }
-            navigate('collectionView');
-        };
 
         const renderParentWordLists = () => {
             const container = document.getElementById('parent-lists-container');
@@ -749,20 +820,20 @@
             
             const lists = activeClient.wordLists || [];
             if (lists.length === 0) {
-                container.innerHTML = '<p class="text-gray-500 font-bold p-4 bg-gray-50 rounded-xl">No words assigned yet! Please check back later.</p>';
+                container.innerHTML = '<p class="text-slate-400 font-semibold p-6 bg-white rounded-3xl text-center border border-slate-100">No word lists assigned yet. Check back soon!</p>';
                 return;
             }
 
             lists.forEach((list, index) => {
                 const count = list.assignments ? list.assignments.length : 0;
                 const card = document.createElement('div');
-                card.className = "bg-white border-2 border-gray-200 rounded-xl p-4 flex justify-between items-center shadow-sm";
+                card.className = "bg-white border border-slate-100 rounded-3xl p-5 flex justify-between items-center shadow-xs hover:border-indigo-200 transition-all";
                 card.innerHTML = `
                     <div class="text-left">
-                        <h4 class="font-black text-lg text-gray-800">${list.name}</h4>
-                        <p class="text-sm text-gray-500 font-bold">${count} words</p>
+                        <h4 class="font-display font-bold text-lg text-slate-800">${list.name}</h4>
+                        <p class="text-xs text-slate-400 font-bold mt-0.5">${count} words</p>
                     </div>
-                    <button onclick="startPractice(${index})" class="bg-green-500 hover:bg-green-600 text-white font-black px-6 py-3 rounded-xl shadow-md transition-transform active:scale-95">Play</button>
+                    <button onclick="startPractice(${index})" class="bg-indigo-600 hover:bg-indigo-700 text-white font-display font-bold px-6 py-3 rounded-2xl shadow-md shadow-indigo-100 transition-transform active:scale-95 text-sm">Play</button>
                 `;
                 container.appendChild(card);
             });
@@ -781,6 +852,14 @@
             wordsPracticedThisSession = [];
             sessionStartTime = Date.now();
             currentSessionLogId = null;
+
+            const hintContainer = document.getElementById('practice-hint-container');
+            if (currentPracticeList.hintText && currentPracticeList.hintText.trim() !== '') {
+                document.getElementById('practice-hint-text').innerText = currentPracticeList.hintText;
+                hintContainer.classList.remove('hide');
+            } else {
+                hintContainer.classList.add('hide');
+            }
 
             try {
                 const logRef = await addDoc(collection(db, 'clients', activeClient.id, 'logs'), {
@@ -805,7 +884,6 @@
 
             const item = practiceQueue[currentPracticeIndex];
             document.getElementById('practice-image').src = getImgUrl(item);
-            document.getElementById('practice-word-text').innerText = item.word;
         };
 
         window.nextPracticeWord = async () => {
@@ -857,11 +935,9 @@
         const triggerPrizeAnimation = () => {
             const container = document.getElementById('prize-container');
             const mainContent = document.getElementById('practice-complete-content');
-            const collectibleUI = document.getElementById('collectible-selection-ui');
             
             container.innerHTML = '';
             mainContent.classList.remove('hide');
-            collectibleUI.classList.add('hide');
             
             if (!currentPracticeList || currentPracticeList.prize === 'none') return;
             
@@ -892,7 +968,6 @@
                     
                     el.onclick = (e) => {
                         e.stopPropagation();
-                        // Particle Burst Animation
                         const rect = el.getBoundingClientRect();
                         for(let p=0; p<8; p++) {
                             const part = document.createElement('div');
@@ -929,80 +1004,13 @@
                 el.onclick = () => { el.classList.toggle('scale-125'); };
                 
                 container.appendChild(el);
-            } else if (['aquarium', 'zoo', 'character'].includes(prizeType)) {
-                mainContent.classList.add('hide');
-                collectibleUI.classList.remove('hide');
-                showCollectibleSelection(prizeType);
             }
-        };
-
-        const showCollectibleSelection = (type) => {
-            const optionsContainer = document.getElementById('collectible-options');
-            const title = document.getElementById('collectible-title');
-            optionsContainer.innerHTML = '';
-
-            let choices = [];
-            if (type === 'aquarium') {
-                title.innerText = "Choose a new sea creature!";
-                choices = SEA_CREATURES.sort(() => 0.5 - Math.random()).slice(0, 3);
-            } else if (type === 'zoo') {
-                title.innerText = "Choose a new zoo animal!";
-                choices = LAND_CREATURES.sort(() => 0.5 - Math.random()).slice(0, 3);
-            } else if (type === 'character') {
-                const charData = activeClient.collectionCharacter || { base: '', accessories: [] };
-                if (!charData.base) {
-                    title.innerText = "Choose your character!";
-                    choices = CHAR_BASES.sort(() => 0.5 - Math.random()).slice(0, 3);
-                } else {
-                    title.innerText = "Choose a new accessory!";
-                    choices = CHAR_ACCESSORIES.sort(() => 0.5 - Math.random()).slice(0, 3);
-                }
-            }
-
-            choices.forEach(choice => {
-                const btn = document.createElement('button');
-                btn.className = "text-6xl bg-gray-50 hover:bg-blue-100 p-4 rounded-2xl border-4 border-transparent hover:border-blue-400 transition-all hover:scale-110 shadow-sm";
-                btn.innerText = choice;
-                btn.onclick = () => saveCollectibleSelection(type, choice);
-                optionsContainer.appendChild(btn);
-            });
-        };
-
-        const saveCollectibleSelection = async (type, choice) => {
-            if (type === 'aquarium') {
-                if (!activeClient.collectionAquarium) activeClient.collectionAquarium = [];
-                activeClient.collectionAquarium.push(choice);
-            } else if (type === 'zoo') {
-                if (!activeClient.collectionZoo) activeClient.collectionZoo = [];
-                activeClient.collectionZoo.push(choice);
-            } else if (type === 'character') {
-                if (!activeClient.collectionCharacter) activeClient.collectionCharacter = { base: '', accessories: [] };
-                if (!activeClient.collectionCharacter.base && CHAR_BASES.includes(choice)) {
-                    activeClient.collectionCharacter.base = choice;
-                } else {
-                    activeClient.collectionCharacter.accessories.push(choice);
-                }
-            }
-
-            try {
-                await setDoc(doc(db, 'clients', activeClient.id), {
-                    collectionAquarium: activeClient.collectionAquarium || [],
-                    collectionZoo: activeClient.collectionZoo || [],
-                    collectionCharacter: activeClient.collectionCharacter || { base: '', accessories: [] }
-                }, { merge: true });
-            } catch (err) {
-                console.error("Failed to save collectible", err);
-            }
-
-            document.getElementById('collectible-selection-ui').classList.add('hide');
-            document.getElementById('practice-complete-content').classList.remove('hide');
-            renderParentCollectionsUI();
         };
 
         window.handleClinicianLogin = () => {
             const u = document.getElementById('clinician-user').value.trim();
             const p = document.getElementById('clinician-pass').value.trim();
-            if (u === 'Kristen' && p === 'spEch08') {
+            if (u === 'Kristen' && p === 'speech80') {
                 currentUserRole = 'clinician';
                 document.getElementById('clinician-user').value = '';
                 document.getElementById('clinician-pass').value = '';
@@ -1025,14 +1033,14 @@
                 
                 allClients.forEach(c => {
                     const card = document.createElement('div');
-                    card.className = "bg-white p-4 rounded-xl shadow-sm border-2 border-gray-100 flex justify-between items-center cursor-pointer hover:border-purple-300 transition-colors";
+                    card.className = "bg-white p-5 rounded-3xl shadow-xs border border-slate-100 flex justify-between items-center cursor-pointer hover:border-purple-300 transition-all";
                     card.onclick = () => openEditClient(c);
                     card.innerHTML = `
                         <div>
-                            <p class="font-black text-lg text-gray-800">${c.name}</p>
-                            <p class="text-sm text-gray-500">${c.assignments ? c.assignments.length : 0} words assigned</p>
+                            <p class="font-display font-bold text-lg text-slate-800">${c.name}</p>
+                            <p class="text-xs text-slate-400 font-semibold mt-0.5">${c.assignments ? c.assignments.length : 0} words assigned</p>
                         </div>
-                        <div class="text-3xl bg-gray-50 rounded-lg p-2">${c.emoji}</div>
+                        <div class="text-3xl bg-slate-50 rounded-2xl p-2.5 border border-slate-100">${c.emoji}</div>
                     `;
                     list.appendChild(card);
                 });
@@ -1050,9 +1058,8 @@
             document.getElementById('edit-show-100').checked = false;
             document.getElementById('edit-100-count').innerText = "0";
             
-            document.getElementById('edit-reward-aquarium').checked = false;
-            document.getElementById('edit-reward-zoo').checked = false;
-            document.getElementById('edit-reward-character').checked = false;
+            document.getElementById('edit-show-weekly-tracker').checked = false;
+            document.getElementById('edit-session-day').value = 'tuesday';
 
             editSelectedEmoji = '🐎';
             document.getElementById('edit-client-emoji-display').innerText = editSelectedEmoji;
@@ -1084,21 +1091,18 @@
                 const count100El = document.getElementById('edit-100-count');
                 if (count100El) count100El.innerText = client.wordCount100 || 0;
                 
-                const rewAq = document.getElementById('edit-reward-aquarium');
-                if (rewAq) rewAq.checked = client.rewardAquarium || false;
-                
-                const rewZoo = document.getElementById('edit-reward-zoo');
-                if (rewZoo) rewZoo.checked = client.rewardZoo || false;
-                
-                const rewChar = document.getElementById('edit-reward-character');
-                if (rewChar) rewChar.checked = client.rewardCharacter || false;
+                const showTrackerToggle = document.getElementById('edit-show-weekly-tracker');
+                if (showTrackerToggle) showTrackerToggle.checked = client.showWeeklyTracker || false;
+
+                const sessionDaySel = document.getElementById('edit-session-day');
+                if (sessionDaySel) sessionDaySel.value = client.sessionDay || 'tuesday';
 
                 editSelectedEmoji = client.emoji || '🐎';
                 const emojiDisp = document.getElementById('edit-client-emoji-display');
                 if (emojiDisp) emojiDisp.innerText = editSelectedEmoji;
                 
                 if (client.assignments && (!client.wordLists || client.wordLists.length === 0)) {
-                    editClientWordLists = [{ id: 'legacy', name: 'My Words', assignments: client.assignments, prize: 'bubbles' }];
+                    editClientWordLists = [{ id: 'legacy', name: 'My Words', assignments: client.assignments, prize: 'bubbles', hintText: '' }];
                 } else {
                     editClientWordLists = client.wordLists || [];
                 }
@@ -1127,6 +1131,7 @@
                 id: Date.now().toString(),
                 name: "New List",
                 prize: "bubbles",
+                hintText: "",
                 assignments: []
             };
             editClientWordLists.push(newList);
@@ -1160,6 +1165,11 @@
             editClientWordLists[currentEditListIndex].prize = document.getElementById('edit-list-prize').value;
         };
 
+        window.updateCurrentListHint = () => {
+            if (currentEditListIndex === -1) return;
+            editClientWordLists[currentEditListIndex].hintText = document.getElementById('edit-list-hint').value;
+        };
+
         const renderWordListsEditor = () => {
             const tabsContainer = document.getElementById('edit-list-tabs');
             const editorContainer = document.getElementById('list-editor-container');
@@ -1167,7 +1177,7 @@
             
             if (editClientWordLists.length === 0) {
                 editorContainer.classList.add('hide');
-                tabsContainer.innerHTML = '<p class="text-sm text-gray-500 font-bold">No lists created. Create one to assign words.</p>';
+                tabsContainer.innerHTML = '<p class="text-xs text-slate-400 font-bold">No lists created. Click "+ Create New List" to begin.</p>';
                 return;
             }
             
@@ -1177,7 +1187,7 @@
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 btn.id = `list-tab-${index}`;
-                btn.className = `whitespace-nowrap px-4 py-2 rounded-t-lg font-bold text-sm border-2 border-b-0 ${currentEditListIndex === index ? 'bg-white border-gray-200 text-blue-600' : 'bg-gray-100 border-transparent text-gray-500 hover:bg-gray-200'}`;
+                btn.className = `whitespace-nowrap px-4 py-2 rounded-2xl font-bold text-xs border transition-all ${currentEditListIndex === index ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm shadow-indigo-100' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`;
                 btn.innerText = list.name || "Unnamed";
                 btn.onclick = () => selectEditList(index);
                 tabsContainer.appendChild(btn);
@@ -1186,6 +1196,7 @@
             const currentList = editClientWordLists[currentEditListIndex];
             document.getElementById('edit-list-name').value = currentList.name;
             document.getElementById('edit-list-prize').value = currentList.prize || 'none';
+            document.getElementById('edit-list-hint').value = currentList.hintText || '';
             
             if (!document.getElementById('edit-assign-sound').innerHTML) {
                 window.renderSoundOptions();
@@ -1197,7 +1208,7 @@
 
         const loadClientLogs = async (clientId) => {
             const container = document.getElementById('client-logs-container');
-            container.innerHTML = '<p class="text-gray-400 text-sm italic">Loading logs...</p>';
+            container.innerHTML = '<p class="text-slate-400 text-xs italic">Loading logs...</p>';
             try {
                 const logsSnap = await getDocs(collection(db, 'clients', clientId, 'logs'));
                 let logs = [];
@@ -1206,24 +1217,34 @@
                 
                 container.innerHTML = '';
                 if(logs.length === 0) {
-                    container.innerHTML = '<p class="text-gray-400 text-sm italic">No history yet.</p>';
+                    container.innerHTML = '<p class="text-slate-400 text-xs italic">No practice history yet.</p>';
                     return;
                 }
 
                 logs.forEach(l => {
                     const div = document.createElement('div');
-                    div.className = "bg-gray-50 border border-gray-200 p-3 rounded-lg";
-                    div.innerHTML = `
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="font-bold text-gray-700">${new Date(l.date).toLocaleString()}</span>
-                            <span class="text-xs font-bold bg-gray-200 text-gray-700 px-2 py-1 rounded">${l.durationSeconds} sec</span>
-                        </div>
-                        <p class="text-sm text-gray-600">Practiced: <span class="font-medium">${l.words.join(', ')}</span></p>
-                    `;
+                    div.className = "bg-slate-50 border border-slate-100 p-3.5 rounded-2xl";
+                    if (l.isFeedback) {
+                        div.innerHTML = `
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-amber-700 text-xs">💬 Parent Feedback</span>
+                                <span class="text-[10px] text-slate-400 font-semibold">${new Date(l.date).toLocaleString()}</span>
+                            </div>
+                            <p class="text-xs font-semibold text-slate-700">${l.message}</p>
+                        `;
+                    } else {
+                        div.innerHTML = `
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-slate-600 text-xs">${new Date(l.date).toLocaleString()}</span>
+                                <span class="text-[10px] font-bold bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-lg">${l.durationSeconds} sec</span>
+                            </div>
+                            <p class="text-xs text-slate-500 font-medium">Practiced: <span class="font-bold text-slate-700">${l.words ? l.words.join(', ') : ''}</span></p>
+                        `;
+                    }
                     container.appendChild(div);
                 });
             } catch (e) {
-                container.innerHTML = '<p class="text-red-400 text-sm italic">Failed to load logs.</p>';
+                container.innerHTML = '<p class="text-rose-400 text-xs italic">Failed to load logs.</p>';
             }
         };
 
@@ -1237,11 +1258,11 @@
             }
             
             emojiPickerWindow = document.createElement('div');
-            emojiPickerWindow.className = "absolute bg-white shadow-xl border-2 border-gray-200 rounded-xl p-3 grid grid-cols-4 gap-2 z-50 animate-fade-in";
+            emojiPickerWindow.className = "absolute bg-white shadow-xl border border-slate-200 rounded-2xl p-3 grid grid-cols-4 gap-2 z-50 animate-fade-in w-max left-1/2 transform -translate-x-1/2";
             EmojisList.forEach(e => {
                 const b = document.createElement('button');
                 b.type = 'button';
-                b.className = "text-2xl hover:bg-gray-100 rounded-lg p-1";
+                b.className = "text-2xl hover:bg-slate-50 rounded-xl p-2 transition-colors flex items-center justify-center";
                 b.innerText = e;
                 b.onclick = (ev) => {
                     ev.stopPropagation();
@@ -1256,7 +1277,7 @@
             const container = document.getElementById('emoji-picker-container');
             emojiPickerWindow.style.top = '100%';
             emojiPickerWindow.style.left = '0';
-            emojiPickerWindow.style.marginTop = '8px';
+            emojiPickerWindow.style.marginTop = '6px';
             container.appendChild(emojiPickerWindow);
 
             setTimeout(() => {
@@ -1352,7 +1373,7 @@
             }
             
             if (words.length === 0) {
-                container.innerHTML = '<p class="text-gray-400 col-span-full font-bold text-sm">No words in this category.</p>';
+                container.innerHTML = '<p class="text-slate-400 col-span-full font-bold text-xs">No words in this category.</p>';
                 return;
             }
 
@@ -1365,10 +1386,10 @@
                 );
                 
                 const label = document.createElement('label');
-                label.className = "flex items-center gap-2 cursor-pointer hover:bg-white p-1 rounded";
+                label.className = "flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-1.5 rounded-xl border border-transparent hover:border-slate-100 transition-colors";
                 label.innerHTML = `
-                    <input type="checkbox" class="w-5 h-5 text-purple-600 rounded focus:ring-purple-500" value="${word}" ${isChecked ? 'checked' : ''}>
-                    <span class="text-gray-700 font-bold capitalize text-sm">${word}</span>
+                    <input type="checkbox" class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500" value="${word}" ${isChecked ? 'checked' : ''}>
+                    <span class="text-slate-700 font-bold capitalize text-xs">${word}</span>
                 `;
                 
                 const cb = label.querySelector('input');
@@ -1479,9 +1500,8 @@
             const show100WordsToggle = document.getElementById('edit-show-100').checked;
             const wordCount100 = parseInt(document.getElementById('edit-100-count').innerText) || 0;
             
-            const rewardAquarium = document.getElementById('edit-reward-aquarium').checked;
-            const rewardZoo = document.getElementById('edit-reward-zoo').checked;
-            const rewardCharacter = document.getElementById('edit-reward-character').checked;
+            const showWeeklyTracker = document.getElementById('edit-show-weekly-tracker').checked;
+            const sessionDay = document.getElementById('edit-session-day').value;
 
             if (!name) {
                 showModal("Missing Info", "Please provide a first name.");
@@ -1497,9 +1517,8 @@
                     wordLists: editClientWordLists,
                     show100WordsToggle: show100WordsToggle,
                     wordCount100: wordCount100,
-                    rewardAquarium: rewardAquarium,
-                    rewardZoo: rewardZoo,
-                    rewardCharacter: rewardCharacter,
+                    showWeeklyTracker: showWeeklyTracker,
+                    sessionDay: sessionDay,
                     updatedAt: new Date().toISOString()
                 };
 
