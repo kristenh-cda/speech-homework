@@ -273,7 +273,7 @@
                     <div>
                         <label class="block text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Picture Password Emoji</label>
                         <div class="relative inline-block" id="emoji-picker-container">
-                            <button type="button" onclick="toggleEmojiPicker(event)" id="edit-client-emoji-display" class="text-2xl bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-1.5">🐎</button>
+                            <button type="button" onclick="toggleEmojiPicker(event)" id="edit-client-emoji-display" class="text-2xl bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-1.5">🦄</button>
                         </div>
                     </div>
                 </div>
@@ -417,7 +417,7 @@
         let editingClientId = null;
         let editClientWordLists = [];
         let currentEditListIndex = -1;
-        let editSelectedEmoji = '🐎';
+        let editSelectedEmoji = '🦄';
 
         let practiceQueue = [];
         let currentPracticeIndex = 0;
@@ -463,7 +463,7 @@
             confirmCallback = null;
         };
 
-        const EmojisList = ['🐎','🌻','🍿','🌈','🎈','🐢','🍟','👑','🦈','☀️','🍒','🐠'];
+        const EmojisList = ['🦄','🌻','🍿','🌈','🎈','🐢','🍟','👑','🦈','☀️','🍒','🐠'];
         const IMAGE_BASE_URL = "https://pub-c53fff4920214dd59d4a14590b17acae.r2.dev";
         
         const DICTIONARY = [
@@ -660,8 +660,10 @@
                 
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
-                    if (data.name.toLowerCase() === name && data.emoji === selectedLoginEmoji) {
-                        foundClient = { id: doc.id, ...data };
+                    // Treat any legacy horse emoji records as the updated unicorn emoji
+                    const normalizedEmoji = data.emoji === '🐎' ? '🦄' : data.emoji;
+                    if (data.name.toLowerCase() === name && normalizedEmoji === selectedLoginEmoji) {
+                        foundClient = { id: doc.id, ...data, emoji: normalizedEmoji };
                     }
                 });
 
@@ -1032,6 +1034,7 @@
                 list.innerHTML = '';
                 
                 allClients.forEach(c => {
+                    const displayEmoji = c.emoji === '🐎' ? '🦄' : c.emoji;
                     const card = document.createElement('div');
                     card.className = "bg-white p-5 rounded-3xl shadow-xs border border-slate-100 flex justify-between items-center cursor-pointer hover:border-purple-300 transition-all";
                     card.onclick = () => openEditClient(c);
@@ -1040,7 +1043,7 @@
                             <p class="font-display font-bold text-lg text-slate-800">${c.name}</p>
                             <p class="text-xs text-slate-400 font-semibold mt-0.5">${c.assignments ? c.assignments.length : 0} words assigned</p>
                         </div>
-                        <div class="text-3xl bg-slate-50 rounded-2xl p-2.5 border border-slate-100">${c.emoji}</div>
+                        <div class="text-3xl bg-slate-50 rounded-2xl p-2.5 border border-slate-100">${displayEmoji}</div>
                     `;
                     list.appendChild(card);
                 });
@@ -1061,7 +1064,7 @@
             document.getElementById('edit-show-weekly-tracker').checked = false;
             document.getElementById('edit-session-day').value = 'tuesday';
 
-            editSelectedEmoji = '🐎';
+            editSelectedEmoji = '🦄';
             document.getElementById('edit-client-emoji-display').innerText = editSelectedEmoji;
             
             editClientWordLists = [];
@@ -1097,7 +1100,7 @@
                 const sessionDaySel = document.getElementById('edit-session-day');
                 if (sessionDaySel) sessionDaySel.value = client.sessionDay || 'tuesday';
 
-                editSelectedEmoji = client.emoji || '🐎';
+                editSelectedEmoji = (client.emoji === '🐎' || !client.emoji) ? '🦄' : client.emoji;
                 const emojiDisp = document.getElementById('edit-client-emoji-display');
                 if (emojiDisp) emojiDisp.innerText = editSelectedEmoji;
                 
