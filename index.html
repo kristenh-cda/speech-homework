@@ -817,7 +817,14 @@
 
             const soundPath = soundObj ? encodeURIComponent(soundObj.id.toLowerCase()) : '';
             const positionPath = subObj ? encodeURIComponent(subObj.label.replace(/\//g, '').toLowerCase()) : '';
-            const groupPath = groupObj ? encodeURIComponent(groupObj.label.replace(/\//g, '').toLowerCase()) + '/' : '';
+            let groupPath = '';
+            if (groupObj) {
+                if (groupObj.id === 'r-medial-wr' || groupObj.label === '/w/ + /r/') {
+                    groupPath = 'w+r/';
+                } else {
+                    groupPath = encodeURIComponent(groupObj.label.replace(/\//g, '').toLowerCase()) + '/';
+                }
+            }
             const safeWord = encodeURIComponent(item.word);
 
             return `${IMAGE_BASE_URL}/${soundPath}/${positionPath}/${groupPath}${safeWord}.svg`;
