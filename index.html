@@ -475,16 +475,34 @@
         window.showConfirm = (title, message, callback) => {
             document.getElementById('confirm-title').innerText = title;
             document.getElementById('confirm-message').innerText = message;
-            document.getElementById('confirm-modal').classList.remove('hide');
             confirmCallback = callback;
+            document.getElementById('confirm-modal').classList.remove('hide');
         };
-        window.closeConfirmModal = (result) => {
+        window.closeConfirmModal = (confirmed) => {
             document.getElementById('confirm-modal').classList.add('hide');
-            if (result && confirmCallback) confirmCallback();
+            if (confirmed && confirmCallback) {
+                confirmCallback();
+            }
             confirmCallback = null;
         };
 
-        const EmojisList = ['🦄','🌻','🍿','🌈','🎈','🐢','🍟','👑','🦈','☀️','🍒','🐠'];
+        const EmojisList = ['🦄','🐬','🍿','🌈','🧁','🦖','🍕','⚽️','🐧','🌞','🍒','🍩'];
+        const LEGACY_EMOJI_MAP = {
+            '🐎': '🦄',
+            '🌻': '🐬',
+            '🎈': '🧁',
+            '🐢': '🦖',
+            '👑': '⚽️',
+            '🦈': '🐧',
+            '☀️': '🌞',
+            '☀': '🌞',
+            '🐠': '🍩',
+            '🍟': '🍕'
+        };
+        const normalizeEmoji = (emoji) => {
+            if (!emoji) return '🦄';
+            return LEGACY_EMOJI_MAP[emoji] || emoji;
+        };
         const IMAGE_BASE_URL = "https://pub-c53fff4920214dd59d4a14590b17acae.r2.dev";
         
         const DICTIONARY = [
@@ -684,8 +702,8 @@
                 
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
-                    // Treat any legacy horse emoji records as the updated unicorn emoji
-                    const normalizedEmoji = data.emoji === '🐎' ? '🦄' : data.emoji;
+                    // Treat any legacy emoji records as their updated counterparts
+                    const normalizedEmoji = normalizeEmoji(data.emoji);
                     if (data.name.toLowerCase() === name && normalizedEmoji === selectedLoginEmoji) {
                         foundClient = { id: doc.id, ...data, emoji: normalizedEmoji };
                     }
@@ -1164,7 +1182,7 @@
                 list.innerHTML = '';
                 
                 allClients.forEach(c => {
-                    const displayEmoji = c.emoji === '🐎' ? '🦄' : c.emoji;
+                    const displayEmoji = normalizeEmoji(c.emoji);
                     const unread = unreadCounts[c.id] || 0;
 
                     let totalAssignedWords = 0;
@@ -1242,7 +1260,7 @@
                 const sessionDaySel = document.getElementById('edit-session-day');
                 if (sessionDaySel) sessionDaySel.value = client.sessionDay || 'tuesday';
 
-                editSelectedEmoji = (client.emoji === '🐎' || !client.emoji) ? '🦄' : client.emoji;
+                editSelectedEmoji = normalizeEmoji(client.emoji);
                 const emojiDisp = document.getElementById('edit-client-emoji-display');
                 if (emojiDisp) emojiDisp.innerText = editSelectedEmoji;
                 
